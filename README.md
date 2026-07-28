@@ -6,9 +6,15 @@ Predict house prices instantly using **Machine Learning** and **XGBoost** with a
 
 ## 📸 Preview
 
-> *(Add screenshots of your app here after deployment.)*
+![App Screenshot](images/image_1.png)
+![App Screenshot](images/image_2.png)
+![App Screenshot](images/image_3.png)
 
 ---
+
+## 🚀 Live Demo
+
+https://nav-house-prediction.streamlit.app/
 
 ## 🚀 Features
 
