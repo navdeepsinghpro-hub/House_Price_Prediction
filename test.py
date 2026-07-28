@@ -203,8 +203,6 @@ button[kind="secondary"]{
 # ---------------------------------
 model = joblib.load("house_price_model.pkl")
 columns = joblib.load("columns.pkl")
-location_encoder = joblib.load("location_encoder.pkl")
-property_encoder = joblib.load("property_encoder.pkl")
 
 # ---------------------------------
 # Sidebar
@@ -341,21 +339,17 @@ def format_price(price):
 # ---------------------------------
 if st.button("🔍 Predict House Price", use_container_width=True):
 
-    location_encoded = location_encoder.transform([location])[0]
-    property_encoded = property_encoder.transform([property_type])[0]
-
     data = pd.DataFrame({
         "bhk": [bhk],
-        "propertytype": [property_encoded],
-        "location": [location_encoded],
+        "propertytype": [property_type],
+        "location": [location],
         "sqft": [sqft]
     })
 
+    data = pd.get_dummies(data)
     data = data.reindex(columns=columns, fill_value=0)
 
-    st.write(data)
     prediction = model.predict(data)[0]
-    st.write(prediction)
 
     st.markdown(f"""
         <div style="
