@@ -353,9 +353,8 @@ if st.button("🔍 Predict House Price", use_container_width=True):
 
     data = data.reindex(columns=columns, fill_value=0)
 
-    st.write(data)
-    prediction = model.predict(data)[0]
-    st.write(prediction)
+    prediction = float(model.predict(data)[0])
+    prediction = max(0, prediction)  # guard against negative values from version mismatch
 
     st.markdown(f"""
         <div style="
