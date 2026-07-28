@@ -83,7 +83,7 @@ House_Price_Prediction/
 Clone the repository
 
 ```bash
-git clone https://github.com/your-username/House_Price_Prediction.git
+git clone https://github.com/navdeepsinghpro-hub/House_Price_Prediction.git
 ```
 
 Go to the project folder
