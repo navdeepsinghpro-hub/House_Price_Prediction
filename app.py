@@ -1,13 +1,6 @@
 import streamlit as st
 import pandas as pd
 import joblib
-import base64
-
-def get_base64(file):
-    with open(file, "rb") as f:
-        return base64.b64encode(f.read()).decode()
-
-bg = get_base64("hero.jpg")
 
 # ---------------------------------
 # Page Configuration
@@ -18,65 +11,189 @@ st.set_page_config(
     layout="wide"
 )
 
-st.markdown(f"""
+st.markdown("""
 <style>
 
-/* Background */
-.stApp {{
-    background-color: black;
-}}
+/* Main Background */
+.stApp{
+    background:black;
+}
 
-/* Hero */
-.hero {{
-    background:
-    linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.45)),
-    url("data:image/jpeg;base64,{bg}");
+/* Main Container */
+.block-container{
+    padding-top:2rem;
+    padding-bottom:2rem;
+    max-width:1200px;
+}
 
-    background-size: cover;
-    background-position: center;
-
-    padding:70px;
+/* Hero Card */
+.hero{
+    background:linear-gradient(135deg,#2563EB,#06B6D4);
+    color:white;
+    padding:50px;
     border-radius:20px;
-    color:white;
     text-align:center;
+    margin-bottom:35px;
+    box-shadow:0 12px 30px rgba(0,0,0,.18);
+}
 
-    margin-bottom:30px;
-
-    box-shadow:0px 8px 20px rgba(0,0,0,.2);
-}}
-
-.hero h1 {{
-    font-size:55px;
+.hero h1{
+    font-size:clamp(32px,5vw,52px);
+    font-weight:700;
     margin-bottom:10px;
-}}
+}
 
-.hero p {{
-    font-size:22px;
-}}
+.hero p{
+    font-size:clamp(16px,2vw,20px);
+    opacity:.95;
+}
 
-/* Button */
+/* Input Boxes */
+[data-testid="stNumberInput"],
+[data-testid="stSelectbox"]{
+    background:white;
+    border-radius:15px;
+    padding:10px;
+    box-shadow:0 5px 15px rgba(0,0,0,.08);
+}
 
-.stButton>button {{
-
+/* Predict Button */
+.stButton > button{
     width:100%;
-    height:55px;
-
+    height:60px;
     border:none;
+    border-radius:15px;
+    background:linear-gradient(90deg,#2563EB,#1D4ED8);
 
-    border-radius:12px;
+    color:#FFFFFF !important;
+    font-size:22px;
+    font-weight:700;
 
-    background:#2563eb;
+    text-shadow:0 1px 3px rgba(0,0,0,.35);
+    transition:0.3s;
+    cursor:pointer;
+}
 
-    color:white;
+.stButton > button:hover{
+    background:linear-gradient(90deg,#1D4ED8,#1E40AF);
+    transform:translateY(-2px);
+    box-shadow:0 8px 20px rgba(37,99,235,.45);
+}
 
-    font-size:20px;
+.stButton > button *{
+    color:#FFFFFF !important;
+    fill:#FFFFFF !important;
+}
 
-    font-weight:bold;
-}}
+/* Sidebar */
+section[data-testid="stSidebar"]{
+    background:#1E3A8A;
+}
 
-.stButton>button:hover {{
-    background:#1d4ed8;
-}}
+/* Metric Cards */
+[data-testid="stMetric"]{
+    background:white;
+    border-radius:15px;
+    padding:18px;
+    box-shadow:0 4px 12px rgba(0,0,0,.10);
+}
+
+/* Metric Label */
+[data-testid="stMetricLabel"]{
+    color:#2563EB !important;
+    font-weight:600 !important;
+    font-size:16px !important;
+}
+
+/* Metric Value */
+[data-testid="stMetricValue"]{
+    color:#111827 !important;
+    font-weight:700 !important;
+    font-size:30px !important;
+}
+
+/* Metric Delta (if any) */
+[data-testid="stMetricDelta"]{
+    color:#16A34A !important;
+}
+
+/* ============================= */
+/* Blue Labels */
+/* ============================= */
+
+[data-testid="stWidgetLabel"] p{
+    color:#2563EB !important;
+    font-size:18px !important;
+    font-weight:700 !important;
+}
+
+/* Number Input Text */
+.stNumberInput input{
+    color:#2563EB !important;
+    font-weight:700 !important;
+    font-size:18px !important;
+}
+
+/* Selectbox Text */
+[data-baseweb="select"] span{
+    color:#2563EB !important;
+    font-weight:700 !important;
+    font-size:18px !important;
+}
+
+/* Selectbox Arrow */
+[data-baseweb="select"] svg{
+    color:#2563EB !important;
+}
+
+/* Plus / Minus Buttons */
+button[kind="secondary"]{
+    color:#2563EB !important;
+}
+
+/* Metric Labels */
+[data-testid="stMetricLabel"]{
+    color:#2563EB !important;
+}
+
+/* Mobile Responsive */
+
+@media (max-width: 768px){
+
+    .block-container{
+        padding:1rem;
+    }
+
+    .hero{
+        padding:30px 20px;
+        border-radius:15px;
+    }
+
+    .hero h1{
+        font-size:34px;
+    }
+
+    .hero p{
+        font-size:16px;
+    }
+
+    .stButton>button{
+        height:50px;
+        font-size:18px;
+    }
+
+    [data-testid="stMetric"]{
+        padding:12px;
+    }
+
+    [data-testid="stMetricValue"]{
+        font-size:22px !important;
+    }
+
+    [data-testid="stWidgetLabel"] p{
+        font-size:16px !important;
+    }
+}
 
 </style>
 """, unsafe_allow_html=True)
@@ -144,6 +261,7 @@ Predict the estimated market value of residential properties using an **XGBoost 
 # ---------------------------------
 # Main Title
 # ---------------------------------
+
 st.markdown("""
 <div class="hero">
 
@@ -233,14 +351,55 @@ if st.button("🔍 Predict House Price", use_container_width=True):
 
     prediction = model.predict(data)[0]
 
-    st.success("✅ Prediction Completed!")
+    st.markdown(f"""
+        <div style="
+        background:white;
+        padding:35px;
+        border-radius:20px;
+        box-shadow:0 10px 25px rgba(0,0,0,.15);
+        text-align:center;
+        margin-top:20px;
+        ">
 
-    st.metric(
-        "💰 Estimated House Price",
-        format_price(prediction)
-    )
+        <h3 style="color:#2563EB;">
+        💰 Estimated House Price
+        </h3>
 
-    st.caption(f"Exact Price : ₹ {prediction:,.0f}")
+        <h1 style="
+        color:#16A34A;
+        font-size:55px;
+        margin-bottom:5px;
+        ">
+        {format_price(prediction)}
+        </h1>
+
+        <p style="
+        font-size:18px;
+        color:gray;
+        ">
+        Exact Price : ₹ {prediction:,.0f}
+        </p>
+
+        </div>
+        """, unsafe_allow_html=True)
+
+    st.subheader("📈 Expected Price Range")
+
+    low = prediction - 2120000
+    high = prediction + 2120000
+
+    c1, c2 = st.columns(2)
+
+    with c1:
+        st.metric("💸 Minimum Price", format_price(low))
+
+    with c2:
+        st.metric("💰 Maximum Price", format_price(high))
+        
+    st.subheader("🎯 Prediction Confidence")
+    confidence = 57.17
+    st.progress(confidence / 100)
+    st.write(f"Confidence Score : **{confidence:.2f}%**")
 
     st.info(
         "😊 This is an estimated house price. The actual market price may vary depending on the property's exact location, condition, amenities, market trends, and other factors."
@@ -250,16 +409,30 @@ if st.button("🔍 Predict House Price", use_container_width=True):
 
     st.subheader("🏡 Property Summary")
 
-    c1, c2, c3, c4 = st.columns(4)
+    c1, c2 = st.columns(2)
 
-    c1.metric("🏠 BHK", bhk)
-    c2.metric("🏢 Type", property_type)
-    c3.metric("📍 Location", location)
-    c4.metric("📐 Area", f"{sqft:,} sqft")
+    with c1:
+        st.success(f"🏠 **BHK**\n\n{bhk}")
+        st.success(f"🏢 **Property Type**\n\n{property_type}")
+
+    with c2:
+        st.success(f"📍 **Location**\n\n{location}")
+        st.success(f"📐 **Area**\n\n{sqft:,} sqft")
 
 # ---------------------------------
 # About Model
 # ---------------------------------
+st.subheader("⚙️ Model Details")
+
+c1, c2, c3 = st.columns(3)
+
+with c1:
+    st.metric("🛠️ Algorithm", "XGBoost")
+with c2:
+    st.metric("📊 Features", "4")
+with c3:
+    st.metric("🎯 Task", "Regression")
+
 with st.expander("ℹ️ About This Project"):
 
     st.write("""
@@ -267,6 +440,7 @@ with st.expander("ℹ️ About This Project"):
 
 - **Algorithm:** XGBoost Regressor
 - **Target:** Total House Price
+
 - **Features Used:**
     - BHK
     - Property Type
@@ -285,4 +459,19 @@ with st.expander("ℹ️ About This Project"):
 
 st.divider()
 
-st.caption("Made with ❤️ by Navdeep Singh")
+st.divider()
+
+st.markdown(
+    """
+    <div style="text-align:center; color:gray;">
+
+    ❤️ Made with Python • Streamlit • XGBoost
+    
+    <br>
+    Developed by <b>Navdeep Singh</b>
+    <br><br>
+    <b>Version 2.0</b>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
