@@ -73,13 +73,20 @@ https://nav-house-prediction.streamlit.app/
 ```text
 House_Price_Prediction/
 │
+├── images
 ├── app.py
-├── house_price_model.pkl
 ├── columns.pkl
 ├── hero.jpg
-├── requirements.txt
+├── House_Price_Data.csv
+├── house_price_model.pkl
+├── location_encoder.pkl
+├── main.ipynb
+├── old_UI.py
+├── property_encoder.pkl
 ├── README.md
-└── dataset.csv
+├── requirements.txt
+└──runtime.txt
+
 ```
 
 ---
